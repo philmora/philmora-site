@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHILMORA.COM — Visual Redesign Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --deep-space: #0A0E1A;
+    --cosmic-teal: #00E5CC;
+    --nebula-pink: #FF2D78;
+    --solar-flare: #FF8A00;
+    --prismatic-blue: #3D5AFE;
+    --aurora-green: #00FF88;
+    --starlight: #F0EAFF;
+    --glass-white: rgba(240, 234, 255, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep-space);
+    color: var(--starlight);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(10, 14, 26, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 229, 204, 0.1);
+  }
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px; font-weight: 700;
+    background: linear-gradient(135deg, var(--cosmic-teal), var(--nebula-pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: rgba(240, 234, 255, 0.7); text-decoration: none;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.5px;
+    text-transform: uppercase; transition: all 0.3s;
+  }
+  .nav-links a:hover { color: var(--cosmic-teal); }
+
+  /* HERO */
+  .hero {
+    height: 100vh; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: url('cosmic journey ref.png') center/cover no-repeat;
+    filter: brightness(0.7) saturate(1.3);
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 14, 26, 0.4) 0%,
+      rgba(10, 14, 26, 0.2) 40%,
+      rgba(10, 14, 26, 0.6) 100%
+    );
+  }
+  .hero-glow {
+    position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0, 229, 204, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-content {
+    position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 0 40px;
+  }
+  .hero-content h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 72px; font-weight: 700; line-height: 1.05;
+    margin-bottom: 24px; letter-spacing: -2px;
+  }
+  .hero-content h1 .gradient-text {
+    background: linear-gradient(135deg, var(--cosmic-teal), var(--prismatic-blue), var(--nebula-pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-content p {
+    font-size: 20px; line-height: 1.6; color: rgba(240, 234, 255, 0.8);
+    max-width: 640px; margin: 0 auto 40px;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 40px; border-radius: 60px; font-size: 16px; font-weight: 600;
+    background: linear-gradient(135deg, var(--cosmic-teal), var(--prismatic-blue));
+    color: var(--deep-space); text-decoration: none;
+    box-shadow: 0 0 40px rgba(0, 229, 204, 0.3);
+    transition: all 0.3s;
+  }
+  .hero-cta:hover {
+    box-shadow: 0 0 60px rgba(0, 229, 204, 0.5);
+    transform: translateY(-2px);
+  }
+  .scroll-indicator {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: rgba(240, 234, 255, 0.4); font-size: 12px; letter-spacing: 2px;
+    text-transform: uppercase; z-index: 2;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(180deg, var(--cosmic-teal), transparent);
+    animation: pulse-line 2s ease-in-out infinite;
+  }
+  @keyframes pulse-line {
+    0%, 100% { opacity: 0.3; } 50% { opacity: 1; }
+  }
+
+  /* SECTION DIVIDER */
+  .divider {
+    height: 4px; position: relative; overflow: hidden;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      var(--cosmic-teal) 20%,
+      var(--nebula-pink) 50%,
+      var(--solar-flare) 80%,
+      transparent 100%
+    );
+    opacity: 0.6;
+  }
+
+  /* NOW SECTION */
+  .now-section {
+    padding: 120px 60px; position: relative; overflow: hidden;
+  }
+  .now-bg {
+    position: absolute; inset: 0;
+    background: url('11.png') center/cover no-repeat;
+    filter: brightness(0.25) saturate(1.4);
+  }
+  .now-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(10, 14, 26, 0.85) 0%, rgba(10, 14, 26, 0.7) 100%);
+  }
+  .section-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--cosmic-teal); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before {
+    content: ''; width: 40px; height: 1px; background: var(--cosmic-teal);
+  }
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 48px; font-weight: 700; line-height: 1.15;
+    margin-bottom: 24px; letter-spacing: -1px;
+  }
+  .now-content {
+    position: relative; z-index: 2; max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .now-text p {
+    font-size: 18px; line-height: 1.8; color: rgba(240, 234, 255, 0.75);
+  }
+  .now-cards {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .now-card {
+    background: var(--glass-white);
+    border: 1px solid rgba(0, 229, 204, 0.15);
+    border-radius: 16px; padding: 28px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+  }
+  .now-card:hover {
+    border-color: var(--cosmic-teal);
+    box-shadow: 0 0 30px rgba(0, 229, 204, 0.1);
+    transform: translateY(-4px);
+  }
+  .now-card-icon {
+    font-size: 28px; margin-bottom: 12px;
+    width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0, 229, 204, 0.15), rgba(61, 90, 254, 0.15));
+  }
+  .now-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px; font-weight: 600; margin-bottom: 8px;
+  }
+  .now-card p {
+    font-size: 13px; line-height: 1.5; color: rgba(240, 234, 255, 0.55);
+  }
+
+  /* PATTERN SECTION */
+  .pattern-section {
+    padding: 120px 60px; position: relative; overflow: hidden;
+  }
+  .pattern-bg {
+    position: absolute; inset: 0;
+    /* This would be the teal/pink data wave mesh image */
+    background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 50%, #1a0a2e 100%);
+  }
+  .pattern-mesh {
+    position: absolute; inset: 0; opacity: 0.3;
+    background:
+      radial-gradient(ellipse at 30% 50%, rgba(0, 229, 204, 0.2) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 50%, rgba(255, 45, 120, 0.15) 0%, transparent 60%);
+  }
+  .pattern-content {
+    position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; text-align: center;
+  }
+  .pattern-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    margin-top: 60px;
+  }
+  .pattern-item {
+    background: rgba(240, 234, 255, 0.04);
+    border: 1px solid rgba(240, 234, 255, 0.08);
+    border-radius: 20px; padding: 48px 32px;
+    transition: all 0.4s;
+    position: relative; overflow: hidden;
+  }
+  .pattern-item::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--cosmic-teal), var(--nebula-pink));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .pattern-item:hover::before { opacity: 1; }
+  .pattern-item:hover {
+    background: rgba(240, 234, 255, 0.06);
+    border-color: rgba(0, 229, 204, 0.2);
+    transform: translateY(-6px);
+  }
+  .pattern-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px; font-weight: 700;
+    background: linear-gradient(135deg, var(--cosmic-teal), var(--prismatic-blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .pattern-item h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px; font-weight: 600; margin-bottom: 12px;
+  }
+  .pattern-item p {
+    font-size: 15px; line-height: 1.7; color: rgba(240, 234, 255, 0.6);
+  }
+
+  /* PEOPLE SECTION */
+  .people-section {
+    padding: 120px 60px; position: relative; overflow: hidden;
+  }
+  .people-bg {
+    position: absolute; inset: 0;
+    background: url('cuteroboto - 00005.png') center/cover no-repeat;
+    filter: brightness(0.2) saturate(1.2);
+  }
+  .people-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10, 14, 26, 0.9) 0%, rgba(10, 14, 26, 0.75) 50%, rgba(10, 14, 26, 0.9) 100%);
+  }
+  .people-content {
+    position: relative; z-index: 2; max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .people-image-frame {
+    border-radius: 24px; overflow: hidden; position: relative;
+    border: 1px solid rgba(0, 229, 204, 0.2);
+    box-shadow: 0 0 60px rgba(0, 229, 204, 0.1);
+  }
+  .people-image-frame img {
+    width: 100%; height: 400px; object-fit: cover;
+    filter: saturate(1.2);
+  }
+  .people-image-placeholder {
+    width: 100%; height: 400px;
+    background: linear-gradient(135deg, #0d2847, #1a0a3e);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: rgba(240, 234, 255, 0.3);
+  }
+  .quote-block {
+    border-left: 3px solid var(--cosmic-teal);
+    padding-left: 24px; margin-top: 32px;
+  }
+  .quote-block p {
+    font-size: 20px; font-style: italic; line-height: 1.7;
+    color: rgba(240, 234, 255, 0.8);
+  }
+  .quote-block cite {
+    display: block; margin-top: 12px; font-size: 14px;
+    color: var(--cosmic-teal); font-style: normal;
+  }
+
+  /* BELIEVE SECTION */
+  .believe-section {
+    padding: 160px 60px; position: relative; overflow: hidden;
+    text-align: center;
+  }
+  .believe-bg {
+    position: absolute; inset: 0;
+    /* Earth horizon image */
+    background: linear-gradient(180deg, #0a0e1a 0%, #0d1a2f 40%, #1a0d2e 70%, #0a0e1a 100%);
+  }
+  .believe-glow {
+    position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 400px;
+    background: radial-gradient(ellipse, rgba(255, 138, 0, 0.12) 0%, rgba(255, 45, 120, 0.08) 40%, transparent 70%);
+  }
+  .believe-content {
+    position: relative; z-index: 2; max-width: 800px; margin: 0 auto;
+  }
+  .believe-content .section-title {
+    font-size: 56px;
+    background: linear-gradient(135deg, var(--starlight), var(--cosmic-teal));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .believe-content p {
+    font-size: 20px; line-height: 1.8; color: rgba(240, 234, 255, 0.7);
+    margin-top: 24px;
+  }
+  .believe-values {
+    display: flex; justify-content: center; gap: 48px; margin-top: 60px;
+  }
+  .believe-value {
+    text-align: center;
+  }
+  .believe-value-letter {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 48px; font-weight: 700;
+    background: linear-gradient(135deg, var(--cosmic-teal), var(--nebula-pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .believe-value span {
+    font-size: 14px; color: rgba(240, 234, 255, 0.5);
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+
+  /* BLOG SECTION */
+  .blog-section {
+    padding: 120px 60px; position: relative;
+  }
+  .blog-banner {
+    width: 100%; max-width: 1200px; margin: 0 auto 60px;
+    height: 200px; border-radius: 20px; overflow: hidden;
+    position: relative;
+  }
+  .blog-banner-bg {
+    width: 100%; height: 100%; object-fit: cover;
+    /* Ocean sunrise image */
+    background: linear-gradient(135deg, #1a2a4a, #2d1a3e, #4a2a1a);
+    filter: brightness(0.6) saturate(1.3);
+  }
+  .blog-banner-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(10, 14, 26, 0.8) 0%, rgba(10, 14, 26, 0.3) 50%, rgba(10, 14, 26, 0.8) 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .blog-banner-overlay h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 40px; font-weight: 700;
+    background: linear-gradient(135deg, var(--starlight), var(--cosmic-teal));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .blog-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .blog-card {
+    background: var(--glass-white);
+    border: 1px solid rgba(240, 234, 255, 0.06);
+    border-radius: 16px; overflow: hidden;
+    transition: all 0.4s;
+  }
+  .blog-card:hover {
+    border-color: rgba(0, 229, 204, 0.2);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+  .blog-card-image {
+    height: 200px;
+    background: linear-gradient(135deg, #1a2a4a, #2d1a3e);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; position: relative; overflow: hidden;
+  }
+  .blog-card-image::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+    background: linear-gradient(transparent, rgba(10, 14, 26, 0.8));
+  }
+  .blog-card-body { padding: 24px; }
+  .blog-card-tag {
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--cosmic-teal); margin-bottom: 8px;
+  }
+  .blog-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 12px;
+  }
+  .blog-card p {
+    font-size: 14px; line-height: 1.6; color: rgba(240, 234, 255, 0.5);
+  }
+  .blog-card-meta {
+    padding: 16px 24px; border-top: 1px solid rgba(240, 234, 255, 0.06);
+    font-size: 12px; color: rgba(240, 234, 255, 0.35);
+  }
+
+  /* CONTACT SECTION */
+  .contact-section {
+    padding: 120px 60px; position: relative; overflow: hidden;
+  }
+  .contact-bg {
+    position: absolute; inset: 0;
+    /* Topographic contour lines */
+    background: linear-gradient(180deg, #0a0e1a, #0d1a28, #0a0e1a);
+  }
+  .contact-topo {
+    position: absolute; inset: 0; opacity: 0.15;
+    background:
+      repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(0, 229, 204, 0.1) 1deg, transparent 2deg) 0 0 / 200px 200px,
+      radial-gradient(ellipse at 50% 80%, rgba(0, 229, 204, 0.1) 0%, transparent 60%);
+  }
+  .contact-content {
+    position: relative; z-index: 2; max-width: 800px; margin: 0 auto; text-align: center;
+  }
+  .contact-form {
+    margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .form-group { text-align: left; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label {
+    display: block; font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(240, 234, 255, 0.5); margin-bottom: 8px;
+  }
+  .form-group input, .form-group textarea {
+    width: 100%; padding: 16px 20px;
+    background: rgba(240, 234, 255, 0.05);
+    border: 1px solid rgba(240, 234, 255, 0.1);
+    border-radius: 12px; color: var(--starlight);
+    font-family: 'Inter', sans-serif; font-size: 15px;
+    transition: all 0.3s;
+  }
+  .form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--cosmic-teal);
+    box-shadow: 0 0 20px rgba(0, 229, 204, 0.1);
+  }
+  .form-group textarea { height: 120px; resize: vertical; }
+  .submit-btn {
+    grid-column: 1 / -1;
+    padding: 18px 48px; border: none; border-radius: 60px;
+    background: linear-gradient(135deg, var(--cosmic-teal), var(--prismatic-blue));
+    color: var(--deep-space); font-size: 16px; font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    cursor: pointer; transition: all 0.3s;
+    box-shadow: 0 0 40px rgba(0, 229, 204, 0.2);
+  }
+  .submit-btn:hover {
+    box-shadow: 0 0 60px rgba(0, 229, 204, 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 60px 60px 30px;
+    border-top: 1px solid rgba(240, 234, 255, 0.06);
+  }
+  .footer-content {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-left .logo { margin-bottom: 12px; }
+  .footer-left p {
+    font-size: 13px; color: rgba(240, 234, 255, 0.35); max-width: 300px; line-height: 1.6;
+  }
+  .footer-links { display: flex; gap: 32px; }
+  .footer-links a {
+    color: rgba(240, 234, 255, 0.5); text-decoration: none;
+    font-size: 14px; transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--cosmic-teal); }
+  .footer-bottom {
+    max-width: 1200px; margin: 40px auto 0;
+    padding-top: 20px; border-top: 1px solid rgba(240, 234, 255, 0.04);
+    text-align: center; font-size: 12px; color: rgba(240, 234, 255, 0.25);
+  }
+
+  /* ANNOTATION OVERLAYS */
+  .annotation {
+    position: absolute; z-index: 50;
+    background: rgba(255, 45, 120, 0.9);
+    color: white; padding: 8px 16px; border-radius: 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(255, 45, 120, 0.4);
+    pointer-events: none;
+  }
+  .annotation::after {
+    content: ''; position: absolute; bottom: -6px; left: 20px;
+    width: 12px; height: 12px; background: rgba(255, 45, 120, 0.9);
+    transform: rotate(45deg);
+  }
+  .annotation.right::after { left: auto; right: 20px; }
+  .annotation.bottom { top: auto; }
+  .annotation.bottom::after { bottom: auto; top: -6px; }
+
+  /* IMAGE LABEL */
+  .img-label {
+    position: absolute; bottom: 16px; left: 16px;
+    background: rgba(10, 14, 26, 0.8); backdrop-filter: blur(10px);
+    padding: 6px 14px; border-radius: 6px;
+    font-size: 10px; font-weight: 600; color: var(--cosmic-teal);
+    letter-spacing: 1px; text-transform: uppercase;
+    border: 1px solid rgba(0, 229, 204, 0.2);
+    z-index: 10;
+  }
+
+  /* MOCKUP HEADER BAR */
+  .mockup-banner {
+    background: linear-gradient(135deg, var(--nebula-pink), var(--solar-flare));
+    color: white; text-align: center; padding: 12px;
+    font-size: 13px; font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- MOCKUP LABEL -->
+<div class="mockup-banner">
+  PHILMORA.COM VISUAL REDESIGN MOCKUP — NOT LIVE — DESIGN DIRECTION PREVIEW
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">phil mora</div>
+  <ul class="nav-links">
+    <li><a href="#">Now</a></li>
+    <li><a href="#">Pattern</a></li>
+    <li><a href="#">People</a></li>
+    <li><a href="#">Believe</a></li>
+    <li><a href="#">Blog</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#" style="color: var(--cosmic-teal);">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-glow"></div>
+
+  <div class="annotation" style="top: 100px; right: 60px;">
+    Cosmic spaceship ref.png — animated via Kling AI
+  </div>
+  <div class="img-label" style="bottom: 80px;">
+    BG: cosmic journey ref.png + Kling video loop
+  </div>
+
+  <div class="hero-content">
+    <h1>Building <span class="gradient-text">impossible</span> things<br>at the edge of what's next</h1>
+    <p>AI-native product leader. Architect of experiences that transform industries and deliver extraordinary business outcomes.</p>
+    <a href="#" class="hero-cta">Explore My Work &rarr;</a>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider"></div>
+
+<!-- NOW SECTION -->
+<section class="now-section">
+  <div class="now-bg"></div>
+  <div class="now-overlay"></div>
+
+  <div class="annotation" style="top: 30px; left: 60px;">
+    BG: Rainbow crystal city (11.png) at 25% brightness
+  </div>
+
+  <div class="now-content">
+    <div class="now-text">
+      <div class="section-label">Now</div>
+      <h2 class="section-title">What I'm Building</h2>
+      <p>Currently leading AI product strategy at the intersection of healthcare and consumer experience. Shipping hyper-personalized journeys that boost engagement while delivering 20% increased margins and 30% faster development cycles.</p>
+    </div>
+    <div class="now-cards">
+      <div class="now-card">
+        <div class="now-card-icon">&#9883;</div>
+        <h3>AI Product Strategy</h3>
+        <p>Architecting next-gen platforms with agentic AI at the core</p>
+      </div>
+      <div class="now-card">
+        <div class="now-card-icon">&#10024;</div>
+        <h3>Healthcare AI</h3>
+        <p>Personalized journeys that transform patient outcomes</p>
+      </div>
+      <div class="now-card">
+        <div class="now-card-icon">&#9881;</div>
+        <h3>Platform Scale</h3>
+        <p>From $200M to $1.7B in intelligent ecosystem growth</p>
+      </div>
+      <div class="now-card">
+        <div class="now-card-icon">&#9889;</div>
+        <h3>Creative AI</h3>
+        <p>Music, visuals, and generative art as a builder's playground</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider"></div>
+
+<!-- PATTERN SECTION -->
+<section class="pattern-section">
+  <div class="pattern-bg"></div>
+  <div class="pattern-mesh"></div>
+
+  <div class="annotation" style="top: 30px; right: 60px;">
+    BG: Teal/pink data wave mesh video — Grok animated
+  </div>
+
+  <div class="pattern-content">
+    <div class="section-label" style="justify-content: center;">Pattern</div>
+    <h2 class="section-title">The Throughline</h2>
+    <p style="font-size: 18px; color: rgba(240,234,255,0.65); max-width: 600px; margin: 0 auto;">
+      Three principles emerge across every chapter — from semiconductor engineering to AI-native products.
+    </p>
+
+    <div class="pattern-grid">
+      <div class="pattern-item">
+        <div class="pattern-number">I</div>
+        <h3>Innovative</h3>
+        <p>Solutions appear when viewing problems from unexpected angles. The best products emerge at intersections others overlook.</p>
+      </div>
+      <div class="pattern-item">
+        <div class="pattern-number">G</div>
+        <h3>Generous</h3>
+        <p>Collaboration amplifies everyone's contributions. Championship teams build products that solo brilliance cannot.</p>
+      </div>
+      <div class="pattern-item">
+        <div class="pattern-number">I</div>
+        <h3>Inspirational</h3>
+        <p>Environments that unlock potential beyond what seems possible. Every person on the team should feel they can change the game.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider"></div>
+
+<!-- PEOPLE SECTION -->
+<section class="people-section">
+  <div class="people-bg"></div>
+  <div class="people-overlay"></div>
+
+  <div class="annotation" style="top: 30px; left: 60px;">
+    BG: Ghibli robot in flowers (cuteroboto-00005.png) — animated via Kling
+  </div>
+
+  <div class="people-content">
+    <div>
+      <div class="section-label">People</div>
+      <h2 class="section-title">Tech With a Soul</h2>
+      <p style="font-size: 18px; line-height: 1.8; color: rgba(240,234,255,0.7);">
+        The most enchanting products emerge when technical excellence meets genuine empathy. Every team I've built prioritizes humans — the people using the product and the people building it.
+      </p>
+      <div class="quote-block">
+        <p>"Phil creates environments where impossible ideas become shipping products. He sees angles nobody else does."</p>
+        <cite>— Engineering Lead, Healthcare AI Platform</cite>
+      </div>
+    </div>
+    <div class="people-image-frame">
+      <div class="people-image-placeholder">
+        <div style="text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 12px;">&#127803;</div>
+          <div>cuteroboto - 00005.png</div>
+          <div style="font-size: 11px; margin-top: 4px; color: rgba(240,234,255,0.2);">Ghibli robot in flower field</div>
+        </div>
+      </div>
+      <div class="img-label">cuteroboto - 00005.png</div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider"></div>
+
+<!-- BELIEVE SECTION -->
+<section class="believe-section">
+  <div class="believe-bg"></div>
+  <div class="believe-glow"></div>
+
+  <div class="annotation" style="top: 30px; right: 60px;">
+    BG: Earth horizon silhouette (Horizon_of_Earth.png) — parallax
+  </div>
+
+  <div class="believe-content">
+    <div class="section-label" style="justify-content: center;">Believe</div>
+    <h2 class="section-title">The Big Picture</h2>
+    <p>Every great product story begins with a simple question: How might we enhance human lives through technology? From semiconductor engineering at Nvidia to today's work in healthcare AI platforms — this question has guided every chapter.</p>
+
+    <div class="believe-values">
+      <div class="believe-value">
+        <div class="believe-value-letter">I</div>
+        <span>Innovative</span>
+      </div>
+      <div class="believe-value">
+        <div class="believe-value-letter">G</div>
+        <span>Generous</span>
+      </div>
+      <div class="believe-value">
+        <div class="believe-value-letter">I</div>
+        <span>Inspirational</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider"></div>
+
+<!-- BLOG SECTION -->
+<section class="blog-section">
+  <div class="blog-banner">
+    <div class="blog-banner-bg"></div>
+    <div class="blog-banner-overlay">
+      <h2>The Blog</h2>
+    </div>
+    <div class="img-label">Banner: Ocean sunrise panoramic</div>
+  </div>
+
+  <div class="blog-grid">
+    <div class="blog-card">
+      <div class="blog-card-image" style="background: linear-gradient(135deg, #0d2847, #2d1a3e);">&#129302;</div>
+      <div class="blog-card-body">
+        <div class="blog-card-tag">Artificial Intelligence</div>
+        <h3>Your AI Coach Never Sleeps: How Agentic Systems Are Reshaping Habit Formation</h3>
+        <p>How intelligent, adaptive systems are transforming habit-building while helping you maintain personal agency.</p>
+      </div>
+      <div class="blog-card-meta">July 29, 2025</div>
+    </div>
+    <div class="blog-card">
+      <div class="blog-card-image" style="background: linear-gradient(135deg, #1a2a1a, #0d2847);">&#127793;</div>
+      <div class="blog-card-body">
+        <div class="blog-card-tag">Change Agents</div>
+        <h3>Growing a Digital Ecosystem: Lessons from Agricultural Innovation</h3>
+        <p>Transforming agricultural retail from $200M to $1.7B through intelligent platform strategy.</p>
+      </div>
+      <div class="blog-card-meta">March 15, 2025</div>
+    </div>
+    <div class="blog-card">
+      <div class="blog-card-image" style="background: linear-gradient(135deg, #2d1a1a, #1a0d2e);">&#128640;</div>
+      <div class="blog-card-body">
+        <div class="blog-card-tag">Experiences</div>
+        <h3>From Chips to Clouds: A Product Journey Through Silicon Valley</h3>
+        <p>Lessons learned building products from semiconductor engineering to cloud-native platforms.</p>
+      </div>
+      <div class="blog-card-meta">January 8, 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider"></div>
+
+<!-- CONTACT SECTION -->
+<section class="contact-section">
+  <div class="contact-bg"></div>
+  <div class="contact-topo"></div>
+
+  <div class="annotation" style="top: 30px; left: 60px;">
+    BG: Topographic contour lines (image 3.png) — animated via Grok
+  </div>
+
+  <div class="contact-content">
+    <div class="section-label" style="justify-content: center;">Connect</div>
+    <h2 class="section-title">Let's Build Something</h2>
+    <p style="font-size: 18px; color: rgba(240,234,255,0.65); margin-bottom: 20px;">
+      Whether it's a product challenge, a collaboration, or just a great conversation about what's next in AI — I'd love to hear from you.
+    </p>
+
+    <div class="contact-form">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group full">
+        <label>Message</label>
+        <textarea placeholder="What's on your mind?"></textarea>
+      </div>
+      <button class="submit-btn">Send Message &rarr;</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-left">
+      <div class="logo">phil mora</div>
+      <p>AI-native product builder. San Francisco. Philadelphia. Paris. Denver.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#">LinkedIn</a>
+      <a href="#">GitHub</a>
+      <a href="#">Blog</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 Phil Mora. All rights reserved. Built with love, AI, and an unreasonable amount of color.
+  </div>
+</footer>
+
+</body>
+</html>

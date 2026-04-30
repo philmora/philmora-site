@@ -6,14 +6,21 @@ interface Props {
     trackSections?: boolean
 }
 
+type NavLink = { id: string; idx: string; label: string; href?: string }
+
 /**
  * SiteNav — Phil Mora fixed top navigation.
- * Sigil mark · 5 anchor links (01-05) · status bead + SFO/PHL/FoCo/RNS.
- * Tracks active section via scroll position when trackSections is true.
+ * Sigil mark · 6 anchor links (01-06) · status bead + SFO/PHL/FoCo/RNS.
  *
- * Links target `/#section` so they work from any page (not just /).
- * When already on /, fragment-only nav scrolls smoothly.
- * When on a detail page, it triggers a hard-nav back to home + scroll.
+ * Slots 01–05 link to /#section anchors on the home page. Slot 06 (WORK
+ * BRAIN) links to the standalone /work-brain section.
+ *
+ * Active state:
+ *  - On the home page (or anywhere with trackSections=true): scroll
+ *    position determines which 01–05 slot is active.
+ *  - On /work-brain or /work-brain/:slug: slot 06 is active.
+ *  - On /thoughts or /essays/:slug: slot 05 (THE BIG PICTURE) is active.
+ *  - Otherwise: no slot active.
  *
  * On narrow viewports (≤720px) the section links and location text are
  * hidden — the page scrolls end-to-end and IS the nav. Logo still returns
@@ -24,7 +31,25 @@ export default function SiteNav(props: Props) {
     const [active, setActive] = useState(-1)
 
     useEffect(() => {
-        if (!trackSections || typeof window === "undefined") return
+        if (typeof window === "undefined") return
+
+        const path = window.location.pathname
+
+        // Path-based active state for cross-page consistency.
+        if (path.startsWith("/work-brain")) {
+            setActive(5)
+            return
+        }
+        if (
+            path.startsWith("/thoughts") ||
+            path.startsWith("/essays")
+        ) {
+            setActive(4)
+            return
+        }
+
+        // Home page: scroll-position section tracking.
+        if (!trackSections) return
         const ids = ["now", "pattern", "believe", "voices", "thoughts"]
         const onScroll = () => {
             const y = window.scrollY + 200
@@ -46,12 +71,13 @@ export default function SiteNav(props: Props) {
     const ok = "#4FBA87"
     const mono = "'JetBrains Mono', ui-monospace, monospace"
 
-    const links = [
+    const links: NavLink[] = [
         { id: "now", idx: "01", label: "NOW" },
         { id: "pattern", idx: "02", label: "PATTERN" },
         { id: "believe", idx: "03", label: "BELIEVE" },
         { id: "voices", idx: "04", label: "VOICES" },
         { id: "thoughts", idx: "05", label: "THE BIG PICTURE" },
+        { id: "work-brain", idx: "06", label: "WORK BRAIN", href: "/work-brain" },
     ]
 
     const smartNav = (href: string) => (ev: React.MouseEvent<HTMLAnchorElement>) => {
@@ -93,6 +119,10 @@ export default function SiteNav(props: Props) {
                 }
                 .pm-nav a:hover { color: ${paper} !important; }
                 .pm-nav a.active { color: ${paper} !important; }
+                @media (max-width: 900px) {
+                    .pm-nav-links { gap: 20px !important; }
+                    .pm-nav-links a { font-size: 11px !important; }
+                }
                 @media (max-width: 720px) {
                     .pm-nav { padding: 14px 20px !important; }
                     .pm-nav-links { display: none !important; }
@@ -160,7 +190,7 @@ export default function SiteNav(props: Props) {
                 </a>
                 <div className="pm-nav-links" style={{ display: "flex", gap: 32 }}>
                     {links.map((l, i) => {
-                        const href = `/#${l.id}`
+                        const href = l.href ?? `/#${l.id}`
                         return (
                             <a
                                 key={l.id}

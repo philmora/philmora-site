@@ -556,4 +556,9 @@ const CSS = `
     .wb-prose th, .wb-prose td { padding: 8px 10px; }
     .wb-metadata-footer { flex-direction: column; gap: 8px; }
 }
+@media (max-width: 480px) {
+    .wb-prose table { font-size: 10px; max-width: 100%; table-layout: auto; }
+    .wb-prose th, .wb-prose td { padding: 6px 8px; word-break: break-word; }
+    .wb-prose th { letter-spacing: 0.08em; font-size: 10px; }
+}
 `

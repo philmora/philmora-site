@@ -1171,50 +1171,64 @@ const CSS = `
 }
 @media (max-width: 720px) {
     .pm-root { padding: 0 20px; }
-    .pm-root .hero { grid-template-columns: 1fr; grid-template-areas: "type" "portrait" "run"; padding-top: 88px; padding-bottom: 48px; gap: 28px; }
+    .pm-root .hero { min-height: auto; grid-template-columns: 1fr; grid-template-areas: "type" "portrait" "run"; padding-top: 64px; padding-bottom: 28px; gap: 24px; }
     .pm-root .hero-meta { display: none; }
     .pm-root .hero-h1 .line:nth-child(4) { text-indent: 0; }
     .pm-root .hero-type { min-height: auto; }
-    .pm-root .portrait-frame { min-height: 360px; }
-    .pm-root .runtime { grid-template-columns: 1fr 1fr; gap: 14px 20px; }
+    .pm-root .portrait-frame { min-height: 220px; }
+    .pm-root .runtime { grid-template-columns: 1fr 1fr; gap: 12px 16px; padding-top: 16px; }
     .pm-root .rt-cell { padding-right: 0; border-right: 0; }
-    .pm-root .sec-head { grid-template-columns: 1fr; gap: 16px; padding: 64px 0 32px; }
+    .pm-root .sec-head { grid-template-columns: 1fr; gap: 14px; padding: 48px 0 24px; }
     .pm-root .sec-idx { border-right: 0; padding-right: 0; padding-bottom: 0; }
-    .pm-root .sec-title .display { font-size: clamp(40px, 11vw, 64px); }
-    .pm-root .now-grid { grid-template-columns: 1fr; gap: 28px; padding-bottom: 48px; }
+    .pm-root .sec-title .display { font-size: clamp(36px, 10vw, 56px); }
+    .pm-root .now-grid { grid-template-columns: 1fr; gap: 20px; padding-bottom: 32px; }
     .pm-root .now-main { grid-column: 1; }
-    .pm-root .now-stats { grid-template-columns: 1fr 1fr; grid-column: 1; margin-top: 16px; }
-    .pm-root .now-log { grid-column: 1; grid-row: auto; max-height: none; }
-    .pm-root .pattern-lead { margin-left: 0; margin-bottom: 32px; }
+    .pm-root .now-stats { grid-template-columns: 1fr 1fr; grid-column: 1; margin-top: 12px; }
+    .pm-root .stat { padding: 18px 14px; }
+    .pm-root .stat-n { font-size: clamp(36px, 9vw, 52px); }
+    .pm-root .stat-l { padding-top: 12px; }
+    .pm-root .now-log { display: none; }
+    .pm-root .pattern-lead { margin-left: 0; margin-bottom: 20px; }
     .pm-root .timeline-wrap { height: auto; }
     .pm-root .timeline-sticky { position: relative; top: 0; height: auto; overflow: visible; padding: 0; }
-    .pm-root .timeline-head span:last-child { font-size: 40px; }
+    .pm-root .timeline-head span:last-child { font-size: 36px; }
     .pm-root .timeline-track { transform: none !important; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 12px 4px; gap: 16px; touch-action: pan-x; will-change: auto; }
     .pm-root .timeline-track::-webkit-scrollbar { display: none; }
-    .pm-root .tl-card { flex: 0 0 86vw; max-width: 86vw; min-height: 380px; scroll-snap-align: start; padding: 24px; }
-    .pm-root .tl-co { font-size: 36px; }
+    .pm-root .tl-card { flex: 0 0 86vw; max-width: 86vw; min-height: 320px; scroll-snap-align: start; padding: 20px; }
+    .pm-root .tl-co { font-size: 32px; }
     .pm-root .timeline-rail { display: none; }
-    .pm-root .pos { grid-template-columns: 1fr; gap: 12px; padding: 32px 0; }
+    .pm-root .pos { grid-template-columns: 1fr; gap: 10px; padding: 20px 0; }
     .pm-root .pos-n { padding-top: 0; padding-left: 0; }
     .pm-root .voices-carousel { margin-left: 0; padding-right: 0; }
     .pm-root .voice { flex: 0 0 86vw; max-width: 86vw; min-height: 320px; padding: 24px 20px; }
     .pm-root .voice-hidden { max-height: 200px; opacity: 1; padding-left: 14px; }
-    .pm-root .essays { margin-left: 0; padding-bottom: 48px; }
-    .pm-root .essay { grid-template-columns: 1fr; gap: 10px; padding: 28px 0; }
+    .pm-root .essays { margin-left: 0; padding-bottom: 32px; }
+    .pm-root .essay { grid-template-columns: 1fr; gap: 8px; padding: 16px 0; }
     .pm-root .essay:hover { padding-left: 0; }
-    .pm-root .essay-title { font-size: clamp(26px, 7vw, 34px); }
-    .pm-root .builder-grid { grid-template-columns: 1fr; margin-left: 0; padding-bottom: 48px; }
-    .pm-root .builder-card { padding: 24px 20px; }
-    .pm-root .bc-name { font-size: 22px; }
+    .pm-root .essay-title { font-size: clamp(20px, 5.5vw, 26px); }
+    .pm-root .essay-dek { font-size: 15px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .pm-root .builder-grid { grid-template-columns: 1fr; margin-left: 0; padding-bottom: 32px; }
+    .pm-root .builder-card { padding: 18px 14px; }
+    .pm-root .bc-name { font-size: 18px; }
     .pm-root .bc-status { font-size: 9px; letter-spacing: 0.14em; }
-    .pm-root .contact { padding: 64px 0 48px; }
-    .pm-root .contact-grid { grid-template-columns: 1fr; gap: 28px; }
+    .pm-root .contact { padding: 48px 0 32px; }
+    .pm-root .contact-grid { grid-template-columns: 1fr; gap: 24px; }
     .pm-root .contact-pitch { grid-column: 1; }
-    .pm-root .contact-pitch .display { font-size: clamp(40px, 11vw, 64px); }
-    .pm-root .contact-card { grid-column: 1; padding: 20px; }
-    .pm-root .card-defs > div { grid-template-columns: 72px 1fr; gap: 10px; }
+    .pm-root .contact-pitch .display { font-size: clamp(36px, 10vw, 56px); }
+    .pm-root .contact-card { grid-column: 1; padding: 16px; }
+    .pm-root .card-defs > div { grid-template-columns: 72px 1fr; gap: 10px; padding: 8px 0; }
     .pm-root .foot-row { grid-template-columns: 1fr; gap: 12px; text-align: left; }
     .pm-root .foot-mid, .pm-root .foot-sys { text-align: left; }
+}
+@media (min-width: 481px) and (max-width: 720px) {
+    .pm-root .builder-grid { grid-template-columns: 1fr 1fr; }
+    .pm-root .essays { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .pm-root .essays > li { border-top: 1px solid rgba(237,230,215,0.08); }
+    .pm-root .essays > li:last-child { border-bottom: 1px solid rgba(237,230,215,0.08); }
+    .pm-root .essay-title { font-size: clamp(17px, 3.4vw, 22px); }
+    .pm-root .essay-dek { font-size: 13px; -webkit-line-clamp: 3; }
+    .pm-root .card-defs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+    .pm-root .card-defs > div { border-bottom: 0; padding: 6px 0; }
 }
 
 /* Respect OS-level reduced motion — suppress pulse, drift, hover transforms */

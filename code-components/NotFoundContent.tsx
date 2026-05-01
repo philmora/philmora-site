@@ -74,4 +74,17 @@ const CSS = `
 .pm-404 .btn.primary { background: #E26B38; color: #0A0B0F; border-color: #E26B38; }
 .pm-404 .btn.primary:hover { background: transparent; color: #E26B38; }
 .pm-404-coords { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(237,230,215,0.08); display: flex; gap: 40px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7A7568; text-transform: uppercase; }
+
+@media (max-width: 720px) {
+    .pm-404 {
+        min-height: auto;
+        padding: 96px 20px 64px;
+        gap: 24px;
+    }
+    .pm-404-title { font-size: clamp(44px, 12vw, 72px); }
+    .pm-404-lede { font-size: clamp(17px, 4.5vw, 22px); }
+    .pm-404-ctas { gap: 10px; }
+    .pm-404 .btn { padding: 12px 18px; font-size: 11px; }
+    .pm-404-coords { gap: 12px 24px; margin-top: 24px; padding-top: 20px; font-size: 10px; }
+}
 `

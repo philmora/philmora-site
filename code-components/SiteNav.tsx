@@ -6,13 +6,14 @@ interface Props {
     trackSections?: boolean
 }
 
-type NavLink = { id: string; idx: string; label: string; href?: string }
+type NavLink = { id: string; idx: string; label: string; kicker: string; href?: string }
 
 /**
  * SiteNav — Phil Mora fixed top navigation.
  * Sigil mark · 6 anchor links (01-06) · status bead + SFO/PHL/FoCo/RNS.
  * On mobile (≤720px) the inline links are replaced by a hamburger that
- * opens a full-screen overlay menu (Fraunces-display links + status strip).
+ * opens a full-screen overlay menu (two-tier kicker + label, italic-Fraunces
+ * accent on the active link).
  *
  * Active state:
  *  - On the home page (or anywhere with trackSections=true): scroll
@@ -92,12 +93,12 @@ export default function SiteNav(props: Props) {
     const serif = "'Fraunces', Georgia, serif"
 
     const links: NavLink[] = [
-        { id: "now", idx: "01", label: "NOW" },
-        { id: "pattern", idx: "02", label: "PATTERN" },
-        { id: "believe", idx: "03", label: "BELIEVE" },
-        { id: "voices", idx: "04", label: "VOICES" },
-        { id: "thoughts", idx: "05", label: "THE BIG PICTURE" },
-        { id: "work-brain", idx: "06", label: "WORK BRAIN", href: "/work-brain" },
+        { id: "now", idx: "01", label: "NOW", kicker: "LIVE NOW" },
+        { id: "pattern", idx: "02", label: "PATTERN", kicker: "THE ARC" },
+        { id: "believe", idx: "03", label: "BELIEVE", kicker: "OPERATING" },
+        { id: "voices", idx: "04", label: "VOICES", kicker: "ON RECORD" },
+        { id: "thoughts", idx: "05", label: "THE BIG PICTURE", kicker: "ESSAYS" },
+        { id: "work-brain", idx: "06", label: "WORK BRAIN", kicker: "THE WIKI", href: "/work-brain" },
     ]
 
     const smartNav = (href: string, closeMenu: boolean) =>
@@ -254,8 +255,8 @@ export default function SiteNav(props: Props) {
                     display: grid;
                     grid-template-columns: 56px 1fr;
                     gap: 16px;
-                    align-items: baseline;
-                    padding: 14px 0;
+                    align-items: center;
+                    padding: 12px 0;
                     text-decoration: none;
                     color: ${paper};
                     border-bottom: 1px solid rgba(237,230,215,0.06);
@@ -270,14 +271,30 @@ export default function SiteNav(props: Props) {
                     letter-spacing: 0.18em;
                     color: ${signal};
                     text-transform: uppercase;
+                    font-weight: 500;
+                }
+                .pm-nav-overlay-link .text {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                    min-width: 0;
+                }
+                .pm-nav-overlay-link .kicker {
+                    font-family: ${mono};
+                    font-size: 9px;
+                    font-weight: 500;
+                    letter-spacing: 0.22em;
+                    color: ${paperMute};
+                    text-transform: uppercase;
+                    transition: color 160ms;
                 }
                 .pm-nav-overlay-link .label {
                     font-family: ${serif};
-                    font-weight: 300;
+                    font-weight: 500;
                     font-style: normal;
-                    font-size: clamp(40px, 11vw, 64px);
-                    line-height: 0.95;
-                    letter-spacing: -0.025em;
+                    font-size: clamp(22px, 5.5vw, 30px);
+                    line-height: 1.1;
+                    letter-spacing: -0.015em;
                     color: ${paper};
                     text-transform: uppercase;
                     font-variation-settings: "opsz" 144, "SOFT" 50;
@@ -289,6 +306,9 @@ export default function SiteNav(props: Props) {
                     color: ${signal};
                     font-style: italic;
                     font-weight: 900;
+                }
+                .pm-nav-overlay-link.active .kicker {
+                    color: ${signal};
                 }
                 .pm-nav-overlay-foot {
                     padding: 20px clamp(20px, 5vw, 32px);
@@ -485,7 +505,10 @@ export default function SiteNav(props: Props) {
                                     }}
                                 >
                                     <span className="num">§ {l.idx}</span>
-                                    <span className="label">{l.label}</span>
+                                    <span className="text">
+                                        <span className="kicker">{l.kicker}</span>
+                                        <span className="label">{l.label}</span>
+                                    </span>
                                 </a>
                             )
                         })}

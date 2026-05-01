@@ -10,7 +10,7 @@ type NavLink = { id: string; idx: string; label: string; kicker: string; href?: 
 
 /**
  * SiteNav — Phil Mora fixed top navigation.
- * Sigil mark · 6 anchor links (01-06) · status bead + SFO/PHL/FoCo/RNS.
+ * Sigil mark · 7 anchor links (01-07) · status bead + SFO/PHL/FoCo/RNS.
  * On mobile (≤720px) the inline links are replaced by a hamburger that
  * opens a full-screen overlay menu (two-tier kicker + label, italic-Fraunces
  * accent on the active link).
@@ -19,6 +19,7 @@ type NavLink = { id: string; idx: string; label: string; kicker: string; href?: 
  *  - On the home page (or anywhere with trackSections=true): scroll
  *    position determines which 01–05 slot is active.
  *  - On /work-brain or /work-brain/:slug: slot 06 is active.
+ *  - On /factory or /factory/:slug: slot 07 is active.
  *  - On /thoughts or /essays/:slug: slot 05 (THE BIG PICTURE) is active.
  *  - Otherwise: no slot active.
  */
@@ -35,6 +36,10 @@ export default function SiteNav(props: Props) {
         // Path-based active state for cross-page consistency.
         if (path.startsWith("/work-brain")) {
             setActive(5)
+            return
+        }
+        if (path.startsWith("/factory")) {
+            setActive(6)
             return
         }
         if (
@@ -99,6 +104,7 @@ export default function SiteNav(props: Props) {
         { id: "voices", idx: "04", label: "VOICES", kicker: "ON RECORD" },
         { id: "thoughts", idx: "05", label: "THE BIG PICTURE", kicker: "ESSAYS" },
         { id: "work-brain", idx: "06", label: "WORK BRAIN", kicker: "THE WIKI", href: "/work-brain" },
+        { id: "factory", idx: "07", label: "PRODUCT FACTORY", kicker: "RECIPES", href: "/factory" },
     ]
 
     const smartNav = (href: string, closeMenu: boolean) =>
@@ -188,9 +194,10 @@ export default function SiteNav(props: Props) {
                     border-color: ${signal};
                     color: ${signal};
                 }
-                @media (max-width: 900px) {
+                @media (max-width: 1100px) {
                     .pm-nav-links { gap: 20px !important; }
                     .pm-nav-links a { font-size: 11px !important; }
+                    .pm-nav-status { display: none !important; }
                 }
                 @media (max-width: 720px) {
                     .pm-nav { padding: 14px 20px !important; }
@@ -380,7 +387,7 @@ export default function SiteNav(props: Props) {
                     <Sigil />
                     <span>PHIL&nbsp;MORA</span>
                 </a>
-                <div className="pm-nav-links" style={{ display: "flex", gap: 32 }}>
+                <div className="pm-nav-links" style={{ display: "flex", gap: 24 }}>
                     {links.map((l, i) => {
                         const href = l.href ?? `/#${l.id}`
                         return (

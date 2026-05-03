@@ -146,6 +146,7 @@ export default function HomeContent() {
     const txDateRef = useRef<HTMLSpanElement>(null)
     const runtimeRef = useRef<HTMLSpanElement>(null)
     const mtClockRef = useRef<HTMLSpanElement>(null)
+    const wkRef = useRef<HTMLSpanElement>(null)
     const statRefs = useRef<(HTMLDivElement | null)[]>([])
     const voicesTrackRef = useRef<HTMLDivElement>(null)
     const voicesRailRef = useRef<HTMLDivElement>(null)
@@ -193,6 +194,29 @@ export default function HomeContent() {
                 .toUpperCase()} · 05,000 FT`
         }
 
+        // Current week (Mon–Sun). Recomputed each tick so the page handles
+        // a Sunday-night → Monday-morning rollover if the tab stays open.
+        const fmtWk = () => {
+            const now = new Date()
+            const day = now.getDay() // 0=Sun, 1=Mon, ..., 6=Sat
+            const mondayOffset = day === 0 ? -6 : 1 - day
+            const monday = new Date(now)
+            monday.setDate(now.getDate() + mondayOffset)
+            const sunday = new Date(monday)
+            sunday.setDate(monday.getDate() + 6)
+            const monStr = monday
+                .toLocaleDateString("en-US", { month: "short" })
+                .toUpperCase()
+            const sunStr = sunday
+                .toLocaleDateString("en-US", { month: "short" })
+                .toUpperCase()
+            const year = sunday.getFullYear()
+            if (monday.getMonth() === sunday.getMonth()) {
+                return `${monStr} ${monday.getDate()}–${sunday.getDate()} · ${year}`
+            }
+            return `${monStr} ${monday.getDate()} – ${sunStr} ${sunday.getDate()} · ${year}`
+        }
+
         const pageLoad = Date.now()
         const fmtMT = () => {
             const f = new Intl.DateTimeFormat("en-US", {
@@ -211,6 +235,7 @@ export default function HomeContent() {
         const tick = () => {
             if (mtClockRef.current)
                 mtClockRef.current.textContent = fmtMT()
+            if (wkRef.current) wkRef.current.textContent = fmtWk()
             if (runtimeRef.current) {
                 const t = Math.floor((Date.now() - pageLoad) / 1000)
                 const hh = String(Math.floor(t / 3600)).padStart(2, "0")
@@ -421,7 +446,8 @@ export default function HomeContent() {
                     <div className="hero-type">
                         <div className="eyebrow">
                             <span className="dot" />
-                            PHIL MORA — THE BIG PICTURE, EDITION 08
+                            PHIL MORA — THE BIG PICTURE, EDITION{" "}
+                            {String(ESSAYS.length).padStart(2, "0")}
                         </div>
 
                         <h1 className="display hero-h1">
@@ -479,7 +505,7 @@ export default function HomeContent() {
                         </div>
                         <div className="rt-cell">
                             <span className="rt-k">WK</span>
-                            <span className="rt-v">APR 14–20 · 2026</span>
+                            <span className="rt-v" ref={wkRef}>APR 27–MAY 3 · 2026</span>
                         </div>
                         <div className="rt-cell">
                             <span className="rt-k">BUILD</span>

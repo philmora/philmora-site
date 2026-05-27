@@ -57,6 +57,14 @@ function stripFrontmatter(md: string): string {
     return m ? md.slice(m[0].length) : md
 }
 
+// Front-page heading pattern: green the final word (with its trailing
+// punctuation) in chartreuse-italic-bold. Only applies when the heading has
+// no emphasis/markup of its own — so hand-authored *emphasis* always wins.
+function greenLastWord(html: string): string {
+    if (/[<]/.test(html)) return html
+    return html.replace(/(\S+)(\s*)$/, "<em>$1</em>$2")
+}
+
 function extractSections(
     md: string
 ): { id: string; idx: string; title: string }[] {
@@ -124,10 +132,10 @@ function normalizeBody(input: string): string {
                 const num = sec[1]
                 const title = sec[2]
                 out.push(
-                    `<div class="section-marker" id="s${num}"><div class="idx">§ ${num}</div><h2 class="title">${inline(title)}</h2></div>`
+                    `<div class="section-marker" id="s${num}"><div class="idx">§ ${num}</div><h2 class="title">${greenLastWord(inline(title))}</h2></div>`
                 )
             } else {
-                out.push(`<h${level + 1}>${inline(text)}</h${level + 1}>`)
+                out.push(`<h${level + 1}>${greenLastWord(inline(text))}</h${level + 1}>`)
             }
             i++
             continue
@@ -188,7 +196,7 @@ function enrichTitle(title: string): string {
     if (m && m[2].length > 4 && m[2].length < 60) {
         return `${m[1]} <em>${m[2]}</em>`
     }
-    return title
+    return greenLastWord(title)
 }
 
 const hardNav = (href: string) => (ev: React.MouseEvent<HTMLAnchorElement>) => {
@@ -205,7 +213,18 @@ const hardNav = (href: string) => (ev: React.MouseEvent<HTMLAnchorElement>) => {
 }
 
 /**
- * EssayBodyCMS — Terminal Aurora "Dispatch" essay page.
+ * EssayBodyCMS — D5 brutalist "Dispatch" post template (/essays/:slug).
+ * All JetBrains Mono, sharp corners, chartreuse accents. Headings follow the
+ * front-page pattern: thin display base + a chartreuse-italic-bold emphasis
+ * word (auto-applied to the final word when the source has no emphasis).
+ *
+ * Chrome is deliberately lean: one masthead line, a single metadata memo
+ * block (the only home for issue/date/reading-time/license), and a Table of
+ * Contents rail. No duplicated telemetry.
+ *
+ * Container queries (not @media) for Framer's full-window render context.
+ * The fixed scroll-progress bar is a sibling OUTSIDE the container-type root
+ * so containment doesn't break its viewport pinning.
  */
 export default function EssayBodyCMS(props: Props) {
     const title = props.title ?? ""
@@ -301,10 +320,13 @@ export default function EssayBodyCMS(props: Props) {
     const sections = useMemo(() => extractSections(body), [body])
     const orderStr = order != null ? String(order).padStart(3, "0") : "—"
     const dateShort = formatDate(date)
+    const filedLine = [dateShort, readingTime != null ? `${readingTime} MIN READ` : ""]
+        .filter(Boolean)
+        .join(" · ")
 
     return (
         <>
-            <style>{CSS}</style>
+            <style dangerouslySetInnerHTML={{ __html: CSS }} />
             <div
                 className="pm-scroll-progress"
                 style={{ width: `${scrollPct}%` }}
@@ -313,28 +335,13 @@ export default function EssayBodyCMS(props: Props) {
             <main className="pm-dispatch">
                 <div className="pm-page">
                     <header className="pm-masthead">
-                        <div className="pm-mh-left">
-                            <span>TRANSMISSION · {orderStr}</span>
-                            <span className="pm-mh-name">
-                                PHIL MORA · THE BIG PICTURE
-                            </span>
-                        </div>
-                        <div className="pm-mh-center">
+                        <span className="pm-mh-brand">
+                            PHIL MORA · FIELD NOTES
+                        </span>
+                        <span className="pm-mh-issue">
                             <span className="pm-live-dot" />
-                            EDITION {orderStr} · {dateShort || "—"}
-                        </div>
-                        <div className="pm-mh-right">
-                            <span className="pm-coords">
-                                40.5853°N · 105.0844°W · 5,000 FT
-                            </span>
-                            <span className="pm-bars">
-                                <span />
-                                <span />
-                                <span />
-                                <span />
-                                <span className="off" />
-                            </span>
-                        </div>
+                            TRANSMISSION {orderStr}
+                        </span>
                     </header>
 
                     <dl className="pm-field-meta">
@@ -343,24 +350,21 @@ export default function EssayBodyCMS(props: Props) {
                             Phil Mora · Builder-Operator @ Machinify
                         </dd>
                         <dt>Re</dt>
-                        <dd>
-                            Issue {orderStr}
-                            {title ? " · " : ""}
-                            <span
-                                dangerouslySetInnerHTML={{
-                                    __html: title.replace(/<[^>]+>/g, ""),
-                                }}
-                            />
-                        </dd>
+                        <dd
+                            dangerouslySetInnerHTML={{
+                                __html: title.replace(/<[^>]+>/g, ""),
+                            }}
+                        />
                         <dt>To</dt>
                         <dd>Builders in the collapse</dd>
+                        {filedLine && (
+                            <>
+                                <dt>Filed</dt>
+                                <dd>{filedLine}</dd>
+                            </>
+                        )}
                         <dt>Class</dt>
-                        <dd>
-                            OPEN / CC BY 4.0
-                            {readingTime != null
-                                ? ` / ${readingTime} MIN READ`
-                                : ""}
-                        </dd>
+                        <dd>OPEN / CC BY 4.0</dd>
                     </dl>
 
                     <section className="pm-title-block">
@@ -377,22 +381,6 @@ export default function EssayBodyCMS(props: Props) {
                     </section>
 
                     <div className="pm-body-wrap">
-                        <aside className="pm-rail-left" aria-hidden="true">
-                            <div className="pm-rail-meta">
-                                <span>
-                                    FILE {orderStr} · {dateShort || ""}
-                                </span>
-                            </div>
-                            <div className="pm-rail-meta sig">
-                                <span>DISPATCH · OPEN · CC BY 4.0</span>
-                            </div>
-                            {readingTime != null && (
-                                <div className="pm-rail-meta">
-                                    <span>{readingTime} MIN READ</span>
-                                </div>
-                            )}
-                        </aside>
-
                         <article className="pm-prose">
                             {body ? (
                                 <div
@@ -417,44 +405,8 @@ export default function EssayBodyCMS(props: Props) {
                             )}
                         </article>
 
-                        <aside className="pm-rail-right">
-                            <div className="pm-rail-card">
-                                <div className="pm-rc-hd">
-                                    <span>// STATUS</span>
-                                    <span className="pm-live">
-                                        <span className="pm-live-dot" />
-                                        LIVE
-                                    </span>
-                                </div>
-                                <div className="pm-rc-row">
-                                    <span className="k">EDITION</span>
-                                    <span>{orderStr}</span>
-                                </div>
-                                {dateShort && (
-                                    <div className="pm-rc-row">
-                                        <span className="k">FILED</span>
-                                        <span>{dateShort}</span>
-                                    </div>
-                                )}
-                                {readingTime != null && (
-                                    <div className="pm-rc-row">
-                                        <span className="k">READ</span>
-                                        <span>{readingTime} MIN</span>
-                                    </div>
-                                )}
-                                <div className="pm-rc-row">
-                                    <span className="k">LICENSE</span>
-                                    <span>CC BY 4.0</span>
-                                </div>
-                                <div className="pm-rc-row">
-                                    <span className="k">SOURCE</span>
-                                    <span className="accent">
-                                        philmora/essays
-                                    </span>
-                                </div>
-                            </div>
-
-                            {sections.length > 0 && (
+                        {sections.length > 0 && (
+                            <aside className="pm-rail-right">
                                 <div className="pm-rail-card pm-toc">
                                     <div className="pm-rc-hd">
                                         <span>// CONTENTS</span>
@@ -474,8 +426,8 @@ export default function EssayBodyCMS(props: Props) {
                                         </a>
                                     ))}
                                 </div>
-                            )}
-                        </aside>
+                            </aside>
+                        )}
                     </div>
 
                     <footer className="pm-transmission-footer">
@@ -559,7 +511,7 @@ export default function EssayBodyCMS(props: Props) {
                                 rel="external"
                                 onClick={hardNav("/thoughts")}
                             >
-                                ← ALL DISPATCHES
+                                ← ALL FIELD NOTES
                             </a>
                             <span>© 2026 PHIL MORA · CC BY 4.0</span>
                             <span>FILED FROM FORT COLLINS, CO</span>
@@ -619,158 +571,157 @@ addPropertyControls(EssayBodyCMS, {
 })
 
 const CSS = `
-@import url(https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,100..900,0..100;1,9..144,100..900,0..100&family=JetBrains+Mono:ital,wght@0,400..800;1,400..800&display=swap);
+.pm-scroll-progress { position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: #C8FF3D; box-shadow: 0 0 8px rgba(200,255,61,0.5); z-index: 200; transition: width 60ms linear; }
 
-.pm-scroll-progress { position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: #E26B38; box-shadow: 0 0 8px rgba(226,107,56,0.5); z-index: 200; transition: width 60ms linear; }
-
-.pm-dispatch { color: #EDE6D7; font-family: 'JetBrains Mono', ui-monospace, monospace; position: relative; z-index: 3; }
+.pm-dispatch {
+  --ink: #0A0B0E;
+  --ink-2: #131419;
+  --ink-3: #1A1C22;
+  --paper: #E8E6DC;
+  --paper-dim: #989384;
+  --paper-mute: #5A5750;
+  --prose: #D2CEC2;
+  --line: rgba(232, 230, 220, 0.14);
+  --line-strong: rgba(232, 230, 220, 0.30);
+  --signal: #C8FF3D;
+  --signal-dim: #87a821;
+  --slate: #3A3E48;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  color: var(--paper);
+  font-family: var(--mono);
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  container-type: inline-size;
+}
 .pm-dispatch * { box-sizing: border-box; }
 .pm-dispatch h1, .pm-dispatch h2, .pm-dispatch h3, .pm-dispatch p, .pm-dispatch ol, .pm-dispatch ul, .pm-dispatch dl, .pm-dispatch dd, .pm-dispatch dt, .pm-dispatch blockquote, .pm-dispatch li, .pm-dispatch figure { margin: 0; padding: 0; }
 .pm-dispatch ol, .pm-dispatch ul { list-style: none; }
 .pm-dispatch a { color: inherit; text-decoration: none; }
 
-.pm-page { max-width: 1440px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 72px); }
+.pm-page { max-width: 1320px; margin: 0 auto; padding: 0 clamp(20px, 3cqw, 56px); }
 
-@keyframes pm_disp_pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.75); } }
+@keyframes pm_disp_pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.75); } }
 @keyframes pm_disp_blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
-.pm-masthead { padding: 112px 0 20px; border-bottom: 1px solid rgba(237,230,215,0.08); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 32px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; color: #7A7568; text-transform: uppercase; }
-.pm-mh-left { display: flex; flex-direction: column; gap: 4px; }
-.pm-mh-left .pm-mh-name { color: #EDE6D7; }
-.pm-mh-center { color: #E26B38; font-size: 13px; letter-spacing: 0.18em; white-space: nowrap; display: inline-flex; align-items: center; gap: 10px; }
-.pm-live-dot { display: inline-block; width: 7px; height: 7px; background: #E26B38; border-radius: 50%; box-shadow: 0 0 10px #E26B38; animation: pm_disp_pulse 1.4s ease-in-out infinite; }
-.pm-mh-right { display: flex; flex-direction: column; gap: 4px; text-align: right; align-items: flex-end; }
-.pm-coords { color: #EDE6D7; font-size: 10px; letter-spacing: 0.14em; }
-.pm-bars { display: inline-flex; gap: 3px; margin-top: 4px; }
-.pm-bars span { display: inline-block; width: 3px; height: 10px; background: #E26B38; box-shadow: 0 0 6px rgba(226,107,56,0.25); }
-.pm-bars span.off { background: #3A3E48; box-shadow: none; }
+.pm-masthead { padding: 84px 0 18px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 24px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; }
+.pm-mh-brand { color: var(--paper); }
+.pm-mh-brand::before { content: "▍"; color: var(--signal); margin-right: 8px; }
+.pm-mh-issue { color: var(--signal); display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
+.pm-live-dot { display: inline-block; width: 7px; height: 7px; background: var(--signal); border-radius: 50%; box-shadow: 0 0 10px var(--signal); animation: pm_disp_pulse 1.4s ease-in-out infinite; }
 
-.pm-field-meta { padding: 32px 0; border-bottom: 1px solid rgba(237,230,215,0.08); display: grid; grid-template-columns: 120px 1fr 120px 1fr; row-gap: 12px; column-gap: 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; }
-.pm-field-meta dt { color: #7A7568; text-transform: uppercase; font-size: 10px; letter-spacing: 0.2em; padding-top: 2px; }
-.pm-field-meta dd { color: #EDE6D7; }
-.pm-field-meta dd.accent { color: #E26B38; }
+.pm-field-meta { padding: 28px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 100px 1fr; row-gap: 12px; column-gap: 24px; max-width: 760px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; }
+.pm-field-meta dt { color: var(--paper-mute); text-transform: uppercase; font-size: 10px; letter-spacing: 0.2em; padding-top: 2px; }
+.pm-field-meta dd { color: var(--paper); }
+.pm-field-meta dd.accent { color: var(--signal); }
 
-.pm-title-block { padding: 120px 0 80px; max-width: 980px; }
-.pm-eyebrow-pulse { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #7A7568; display: inline-flex; align-items: center; margin-bottom: 48px; }
-.pm-eyebrow-pulse::before { content: ""; display: inline-block; width: 6px; height: 6px; background: #E26B38; border-radius: 50%; margin-right: 10px; box-shadow: 0 0 12px rgba(226,107,56,0.25); animation: pm_disp_pulse 1.8s ease-in-out infinite; }
-.pm-essay-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(56px, 8vw, 128px); line-height: 0.94; letter-spacing: -0.035em; color: #EDE6D7; font-variation-settings: "opsz" 144, "SOFT" 50; text-wrap: balance; margin-bottom: 40px; }
-.pm-essay-title em { font-style: italic; font-weight: 900; color: #E26B38; }
-.pm-essay-dek { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.35; letter-spacing: -0.01em; color: #BDB6A8; max-width: 720px; text-wrap: pretty; }
-.pm-essay-dek em { color: #EDE6D7; font-style: italic; font-weight: 400; }
+.pm-title-block { padding: 88px 0 64px; max-width: 1000px; }
+.pm-eyebrow-pulse { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--paper-mute); display: inline-flex; align-items: center; margin-bottom: 40px; }
+.pm-eyebrow-pulse::before { content: ""; display: inline-block; width: 6px; height: 6px; background: var(--signal); border-radius: 50%; margin-right: 10px; box-shadow: 0 0 12px rgba(200,255,61,0.25); animation: pm_disp_pulse 1.8s ease-in-out infinite; }
+.pm-essay-title { font-family: var(--mono); font-weight: 100; font-size: clamp(42px, 8cqw, 112px); line-height: 0.96; letter-spacing: -0.05em; color: var(--paper); text-wrap: balance; margin-bottom: 36px; }
+.pm-essay-title em { font-style: italic; font-weight: 800; color: var(--signal); }
+.pm-essay-dek { font-family: var(--mono); font-weight: 400; font-size: clamp(15px, 1.6cqw, 19px); line-height: 1.55; letter-spacing: 0.005em; color: var(--paper-dim); max-width: 660px; text-wrap: pretty; }
+.pm-essay-dek em { color: var(--signal); font-style: italic; font-weight: 700; }
 
-.pm-body-wrap { display: grid; grid-template-columns: 88px 1fr 240px; gap: 48px; padding-bottom: 120px; position: relative; }
-.pm-rail-left { border-right: 1px solid rgba(237,230,215,0.08); padding-right: 24px; display: flex; flex-direction: column; gap: 48px; position: sticky; top: 100px; align-self: start; max-height: calc(100vh - 160px); }
-.pm-rail-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7A7568; writing-mode: vertical-rl; transform: rotate(180deg); text-transform: uppercase; }
-.pm-rail-meta.sig { color: #E26B38; }
+.pm-body-wrap { display: grid; grid-template-columns: 1fr 240px; gap: 64px; padding-bottom: 120px; position: relative; }
+.pm-prose { max-width: 680px; font-family: var(--mono); font-weight: 400; font-size: 16px; line-height: 1.78; letter-spacing: 0.005em; color: var(--prose); }
+.pm-prose p { margin: 0 0 24px; text-wrap: pretty; color: var(--prose); }
+.pm-prose p em { color: var(--signal); font-style: italic; font-weight: 700; }
+.pm-prose p strong { color: var(--paper); font-weight: 700; }
 
-.pm-prose { max-width: 680px; font-family: 'Fraunces', serif; font-weight: 300; font-size: 21px; line-height: 1.7; letter-spacing: -0.005em; color: #BDB6A8; }
-.pm-prose p { margin: 0 0 28px; text-wrap: pretty; color: #BDB6A8; }
-.pm-prose p em { color: #E26B38; font-style: italic; font-weight: 400; }
-.pm-prose p strong { color: #EDE6D7; font-weight: 700; }
+.pm-prose .section-marker { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: baseline; margin: 80px 0 32px; padding-top: 30px; border-top: 1px solid var(--line); scroll-margin-top: 72px; }
+.pm-prose .section-marker .idx { font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; color: var(--signal); text-transform: uppercase; padding-top: 14px; font-weight: 700; }
+.pm-prose .section-marker .title { font-family: var(--mono); font-weight: 200; font-size: clamp(26px, 3.2cqw, 40px); line-height: 1.08; letter-spacing: -0.04em; color: var(--paper); text-wrap: balance; }
+.pm-prose .section-marker .title em { font-style: italic; font-weight: 800; color: var(--signal); }
 
-.pm-prose .section-marker { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: baseline; margin: 96px 0 40px; padding-top: 32px; border-top: 1px solid rgba(237,230,215,0.08); scroll-margin-top: 100px; }
-.pm-prose .section-marker .idx { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; color: #E26B38; text-transform: uppercase; padding-top: 16px; }
-.pm-prose .section-marker .title { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(32px, 3.4vw, 48px); line-height: 1.05; letter-spacing: -0.02em; color: #EDE6D7; font-variation-settings: "opsz" 144, "SOFT" 50; text-wrap: balance; }
-.pm-prose .section-marker .title em { font-style: italic; font-weight: 900; color: #E26B38; }
+.pm-prose h3, .pm-prose h4 { font-family: var(--mono); font-weight: 700; color: var(--paper); letter-spacing: -0.01em; line-height: 1.3; margin: 40px 0 14px; }
+.pm-prose h3 { font-size: 20px; }
+.pm-prose h4 { font-size: 17px; }
+.pm-prose h3 em, .pm-prose h4 em { font-style: italic; font-weight: 800; color: var(--signal); }
 
-.pm-prose .pullquote { margin: 80px -40px; padding: 64px 40px; border-top: 1px solid rgba(226,107,56,0.3); border-bottom: 1px solid rgba(226,107,56,0.3); text-align: center; font-family: 'Fraunces', serif; font-weight: 900; font-style: italic; font-size: clamp(32px, 4.2vw, 56px); line-height: 1.1; letter-spacing: -0.025em; color: #E26B38; font-variation-settings: "opsz" 144, "SOFT" 50; text-wrap: balance; position: relative; }
-.pm-prose .pullquote::before, .pm-prose .pullquote::after { content: ""; position: absolute; left: 50%; width: 60px; height: 1px; background: #E26B38; transform: translateX(-50%); box-shadow: 0 0 10px rgba(226,107,56,0.5); }
+.pm-prose .pullquote { margin: 64px 0; padding: 44px 0; border-top: 1px solid rgba(200,255,61,0.3); border-bottom: 1px solid rgba(200,255,61,0.3); text-align: center; font-family: var(--mono); font-weight: 700; font-style: italic; font-size: clamp(24px, 3.2cqw, 40px); line-height: 1.2; letter-spacing: -0.03em; color: var(--signal); text-wrap: balance; position: relative; }
+.pm-prose .pullquote::before, .pm-prose .pullquote::after { content: ""; position: absolute; left: 50%; width: 60px; height: 1px; background: var(--signal); transform: translateX(-50%); box-shadow: 0 0 10px rgba(200,255,61,0.5); }
 .pm-prose .pullquote::before { top: -1px; }
 .pm-prose .pullquote::after { bottom: -1px; }
-.pm-prose .pullquote .marks { display: block; font-family: 'Fraunces', serif; color: #E26B38; opacity: 0.35; font-size: 0.6em; margin-bottom: 8px; letter-spacing: 0; }
+.pm-prose .pullquote .marks { display: block; font-family: var(--mono); color: var(--signal); opacity: 0.4; font-size: 0.6em; margin-bottom: 8px; letter-spacing: 0; }
 
-.pm-prose blockquote:not(.pullquote) { border-left: 2px solid #E26B38; padding: 8px 0 8px 28px; margin: 32px 0; font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.4; color: #EDE6D7; letter-spacing: -0.015em; text-wrap: pretty; }
-.pm-prose blockquote em { color: #E26B38; }
+.pm-prose blockquote:not(.pullquote) { border-left: 2px solid var(--signal); padding: 6px 0 6px 24px; margin: 30px 0; font-family: var(--mono); font-weight: 400; font-style: italic; font-size: clamp(16px, 1.7cqw, 19px); line-height: 1.6; color: var(--paper); letter-spacing: 0.005em; text-wrap: pretty; }
+.pm-prose blockquote em { color: var(--signal); }
 
-.pm-prose ol, .pm-prose ul { margin: 0 0 36px 0; padding: 0; list-style: none; font-family: 'Fraunces', serif; }
+.pm-prose ol, .pm-prose ul { margin: 0 0 30px 0; padding: 0; list-style: none; font-family: var(--mono); font-size: 16px; }
 .pm-prose ol { counter-reset: pm-ol-counter; }
-.pm-prose ol li { counter-increment: pm-ol-counter; padding: 20px 0 20px 64px; border-top: 1px solid rgba(237,230,215,0.08); position: relative; line-height: 1.5; color: #BDB6A8; }
-.pm-prose ol li::before { content: counter(pm-ol-counter, decimal-leading-zero); position: absolute; left: 0; top: 20px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; color: #E26B38; }
-.pm-prose ol li:last-child { border-bottom: 1px solid rgba(237,230,215,0.08); }
-.pm-prose ol li strong { color: #EDE6D7; }
-.pm-prose ul li { padding: 10px 0 10px 24px; line-height: 1.5; color: #BDB6A8; position: relative; }
-.pm-prose ul li::before { content: "▸"; position: absolute; left: 0; color: #E26B38; font-family: 'JetBrains Mono', monospace; }
-.pm-prose ul li strong { color: #EDE6D7; }
+.pm-prose ol li { counter-increment: pm-ol-counter; padding: 16px 0 16px 60px; border-top: 1px solid var(--line); position: relative; line-height: 1.65; color: var(--prose); }
+.pm-prose ol li::before { content: counter(pm-ol-counter, decimal-leading-zero); position: absolute; left: 0; top: 18px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--signal); }
+.pm-prose ol li:last-child { border-bottom: 1px solid var(--line); }
+.pm-prose ol li strong { color: var(--paper); }
+.pm-prose ul li { padding: 8px 0 8px 24px; line-height: 1.65; color: var(--prose); position: relative; }
+.pm-prose ul li::before { content: "▸"; position: absolute; left: 0; top: 8px; color: var(--signal); font-family: var(--mono); font-size: 0.85em; }
+.pm-prose ul li strong { color: var(--paper); }
 
-.pm-prose a { color: #E26B38; text-decoration: none; border-bottom: 1px solid rgba(226,107,56,0.4); transition: border-color 200ms; }
-.pm-prose a:hover { border-bottom-color: #E26B38; }
+.pm-prose a { color: var(--signal); text-decoration: none; border-bottom: 1px solid rgba(200,255,61,0.4); transition: border-color 200ms; }
+.pm-prose a:hover { border-bottom-color: var(--signal); }
 
-.pm-prose hr { border: 0; border-top: 1px solid rgba(237,230,215,0.08); margin: 48px auto; width: 60%; }
-.pm-prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: #12141B; padding: 2px 6px; border-radius: 3px; color: #EDE6D7; }
-.pm-prose pre { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.55; background: #12141B; border: 1px solid rgba(237,230,215,0.08); border-radius: 4px; padding: 16px 20px; overflow-x: auto; color: #EDE6D7; margin: 0 0 28px; }
+.pm-prose hr { border: 0; border-top: 1px solid var(--line); margin: 44px auto; width: 60%; }
+.pm-prose code { font-family: var(--mono); font-size: 0.92em; background: var(--ink-2); padding: 2px 6px; color: var(--paper); }
+.pm-prose pre { font-family: var(--mono); font-size: 13px; line-height: 1.55; background: var(--ink-2); border: 1px solid var(--line); padding: 16px 20px; overflow-x: auto; color: var(--paper); margin: 0 0 26px; }
 .pm-prose pre code { background: transparent; padding: 0; font-size: 13px; }
 
-.pm-prose table { width: 100%; border-collapse: collapse; margin: 28px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-.pm-prose th, .pm-prose td { padding: 12px 16px; text-align: left; border-bottom: 1px solid rgba(237,230,215,0.08); }
-.pm-prose th { color: #E26B38; letter-spacing: 0.12em; text-transform: uppercase; font-size: 11px; }
-.pm-prose td { color: #BDB6A8; }
+.pm-prose table { width: 100%; border-collapse: collapse; margin: 26px 0; font-family: var(--mono); font-size: 13px; }
+.pm-prose th, .pm-prose td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+.pm-prose th { color: var(--signal); letter-spacing: 0.12em; text-transform: uppercase; font-size: 11px; }
+.pm-prose td { color: var(--prose); }
 
-.pm-prose-status { font-family: 'Fraunces', serif; font-weight: 300; font-size: 20px; line-height: 1.5; color: #7A7568; font-style: italic; }
-.pm-prose-status a { color: #E26B38; text-decoration: none; border-bottom: 1px solid rgba(226,107,56,0.4); }
+.pm-prose-status { font-family: var(--mono); font-weight: 400; font-size: 16px; line-height: 1.6; color: var(--paper-mute); font-style: italic; }
+.pm-prose-status a { color: var(--signal); text-decoration: none; border-bottom: 1px solid rgba(200,255,61,0.4); }
 
-.pm-rail-right { position: sticky; top: 100px; align-self: start; max-height: calc(100vh - 160px); overflow: hidden; display: flex; flex-direction: column; gap: 20px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-.pm-rail-card { border: 1px solid rgba(237,230,215,0.18); background: rgba(10,11,15,0.4); backdrop-filter: blur(4px); padding: 16px; }
-.pm-rc-hd { display: flex; justify-content: space-between; color: #EDE6D7; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid rgba(237,230,215,0.08); }
-.pm-rc-hd .pm-live { color: #E26B38; display: inline-flex; align-items: center; gap: 6px; }
-.pm-rc-hd .pm-live .pm-live-dot { width: 6px; height: 6px; }
-.pm-rc-row { display: grid; grid-template-columns: 80px 1fr; gap: 8px; padding: 6px 0; color: #BDB6A8; font-size: 10px; letter-spacing: 0.08em; }
-.pm-rc-row .k { color: #7A7568; letter-spacing: 0.18em; text-transform: uppercase; font-size: 9px; padding-top: 2px; }
-.pm-rc-row .accent { color: #E26B38; }
-.pm-toc a { display: block; padding: 6px 0; color: #7A7568; text-decoration: none; font-size: 10px; letter-spacing: 0.08em; transition: color 160ms; line-height: 1.4; }
-.pm-toc a:hover { color: #EDE6D7; }
-.pm-toc a .n { color: #E26B38; margin-right: 10px; }
-.pm-toc a.active { color: #E26B38; }
-.pm-toc a.active .n { color: #EDE6D7; }
+.pm-rail-right { position: sticky; top: 72px; align-self: start; max-height: calc(100vh - 120px); overflow: hidden; display: flex; flex-direction: column; gap: 20px; font-family: var(--mono); font-size: 11px; }
+.pm-rail-card { border: 1px solid var(--line-strong); background: rgba(10,11,15,0.4); backdrop-filter: blur(4px); padding: 16px; }
+.pm-rc-hd { display: flex; justify-content: space-between; color: var(--paper); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--line); }
+.pm-toc a { display: block; padding: 6px 0; color: var(--paper-mute); text-decoration: none; font-size: 10px; letter-spacing: 0.08em; transition: color 160ms; line-height: 1.4; }
+.pm-toc a:hover { color: var(--paper); }
+.pm-toc a .n { color: var(--signal); margin-right: 10px; }
+.pm-toc a.active { color: var(--signal); }
+.pm-toc a.active .n { color: var(--paper); }
 
-.pm-transmission-footer { border-top: 1px solid rgba(237,230,215,0.18); padding: 64px 0 80px; display: flex; flex-direction: column; gap: 48px; }
-.pm-eot-bar { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.4em; text-transform: uppercase; color: #E26B38; padding: 32px 0; border-top: 1px solid rgba(226,107,56,0.3); border-bottom: 1px solid rgba(226,107,56,0.3); }
-.pm-cursor-blink { display: inline-block; width: 10px; height: 14px; background: #E26B38; vertical-align: middle; margin-left: 8px; animation: pm_disp_blink 1s step-end infinite; }
+.pm-transmission-footer { border-top: 1px solid var(--line-strong); padding: 64px 0 80px; display: flex; flex-direction: column; gap: 48px; }
+.pm-eot-bar { text-align: center; font-family: var(--mono); font-size: 12px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--signal); padding: 32px 0; border-top: 1px solid rgba(200,255,61,0.3); border-bottom: 1px solid rgba(200,255,61,0.3); }
+.pm-cursor-blink { display: inline-block; width: 10px; height: 14px; background: var(--signal); vertical-align: middle; margin-left: 8px; animation: pm_disp_blink 1s step-end infinite; }
 
 .pm-nav-dispatches { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-.pm-nav-dispatch { display: flex; flex-direction: column; gap: 8px; padding: 24px; border: 1px solid rgba(237,230,215,0.18); background: rgba(10,11,15,0.4); text-decoration: none; color: inherit; transition: border-color 200ms, background 200ms; }
-.pm-nav-dispatch:hover:not(.disabled) { border-color: #E26B38; background: rgba(226,107,56,0.05); }
+.pm-nav-dispatch { display: flex; flex-direction: column; gap: 8px; padding: 24px; border: 1px solid var(--line-strong); background: rgba(10,11,15,0.4); text-decoration: none; color: inherit; transition: border-color 200ms, background 200ms; }
+.pm-nav-dispatch:hover:not(.disabled) { border-color: var(--signal); background: rgba(200,255,61,0.05); }
 .pm-nav-dispatch.disabled { opacity: 0.45; cursor: not-allowed; }
 .pm-nav-dispatch.next { text-align: right; }
-.pm-nav-dispatch .dir { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #E26B38; text-transform: uppercase; }
-.pm-nav-dispatch .num { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #7A7568; }
-.pm-nav-dispatch .title { font-family: 'Fraunces', serif; font-weight: 300; font-size: 22px; line-height: 1.15; letter-spacing: -0.015em; color: #EDE6D7; font-variation-settings: "opsz" 144, "SOFT" 50; }
-.pm-nav-dispatch .title em { font-style: italic; font-weight: 900; color: #E26B38; }
+.pm-nav-dispatch .dir { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; color: var(--signal); text-transform: uppercase; }
+.pm-nav-dispatch .num { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--paper-mute); }
+.pm-nav-dispatch .title { font-family: var(--mono); font-weight: 200; font-size: 22px; line-height: 1.15; letter-spacing: -0.03em; color: var(--paper); }
+.pm-nav-dispatch .title em { font-style: italic; font-weight: 800; color: var(--signal); }
 
-.pm-footer-meta { padding: 24px 0 0; border-top: 1px solid rgba(237,230,215,0.08); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7568; }
-.pm-footer-meta a { color: #E26B38; text-decoration: none; }
-.pm-footer-meta a:hover { color: #EDE6D7; }
+.pm-footer-meta { padding: 24px 0 0; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper-mute); }
+.pm-footer-meta a { color: var(--signal); text-decoration: none; }
+.pm-footer-meta a:hover { color: var(--paper); }
 
-@media (max-width: 1200px) {
-    .pm-body-wrap { grid-template-columns: 56px 1fr 220px; gap: 32px; }
-    .pm-rail-left { padding-right: 16px; }
+@container (max-width: 1200px) {
+    .pm-body-wrap { grid-template-columns: 1fr 220px; gap: 48px; }
 }
-@media (max-width: 1000px) {
+@container (max-width: 1000px) {
     .pm-body-wrap { grid-template-columns: 1fr; gap: 0; padding-bottom: 80px; }
-    .pm-rail-left { display: none; }
-    .pm-rail-right { position: static; max-height: none; margin-top: 64px; padding-top: 32px; border-top: 1px solid rgba(237,230,215,0.08); overflow: visible; }
-    .pm-field-meta { grid-template-columns: 80px 1fr; }
-    .pm-field-meta dt:nth-child(5), .pm-field-meta dt:nth-child(7) { display: none; }
-    .pm-field-meta dd:nth-child(6), .pm-field-meta dd:nth-child(8) { display: none; }
-    .pm-prose .pullquote { margin: 64px -20px; padding: 48px 20px; }
+    .pm-rail-right { position: static; max-height: none; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line); overflow: visible; }
     .pm-nav-dispatches { grid-template-columns: 1fr; }
 }
-@media (max-width: 600px) {
-    .pm-page { padding: 0 20px; }
-    .pm-masthead { grid-template-columns: 1fr; gap: 12px; text-align: left; padding: 88px 0 16px; }
-    .pm-mh-center, .pm-mh-right { text-align: left; align-items: flex-start; }
-    .pm-coords { font-size: 9px; }
-    .pm-field-meta { padding: 20px 0; grid-template-columns: 60px 1fr; row-gap: 8px; column-gap: 12px; font-size: 11px; }
+@container (max-width: 600px) {
+    .pm-masthead { flex-direction: column; align-items: flex-start; gap: 10px; padding: 72px 0 16px; }
+    .pm-field-meta { padding: 20px 0; grid-template-columns: 64px 1fr; row-gap: 10px; column-gap: 14px; font-size: 11px; }
     .pm-field-meta dt { font-size: 9px; }
-    .pm-title-block { padding: 64px 0 48px; }
+    .pm-title-block { padding: 56px 0 44px; }
     .pm-eyebrow-pulse { margin-bottom: 28px; font-size: 10px; }
-    .pm-essay-title { font-size: clamp(40px, 11vw, 64px); margin-bottom: 24px; }
-    .pm-essay-dek { font-size: 19px; }
-    .pm-prose { font-size: 19px; line-height: 1.7; }
-    .pm-prose .section-marker { margin: 64px 0 28px; padding-top: 24px; grid-template-columns: 1fr; gap: 8px; }
+    .pm-essay-title { font-size: clamp(36px, 11cqw, 60px); margin-bottom: 24px; }
+    .pm-essay-dek { font-size: 15px; }
+    .pm-prose { font-size: 15px; line-height: 1.76; }
+    .pm-prose .section-marker { margin: 56px 0 28px; padding-top: 24px; grid-template-columns: 1fr; gap: 8px; }
     .pm-prose .section-marker .idx { padding-top: 0; }
-    .pm-prose .section-marker .title { font-size: 28px; }
-    .pm-prose .pullquote { margin: 48px -20px; padding: 40px 20px; font-size: 28px; }
-    .pm-prose ol li { padding-left: 48px; font-size: 17px; }
+    .pm-prose .section-marker .title { font-size: 26px; }
+    .pm-prose .pullquote { margin: 48px 0; padding: 36px 0; font-size: 24px; }
+    .pm-prose ol li { padding-left: 44px; font-size: 15px; }
     .pm-prose ol li::before { font-size: 10px; }
     .pm-eot-bar { font-size: 10px; letter-spacing: 0.3em; padding: 20px 0; }
     .pm-nav-dispatch { padding: 18px; }

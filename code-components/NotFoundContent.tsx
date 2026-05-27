@@ -9,7 +9,7 @@ import { addPropertyControls, ControlType } from "framer"
 export default function NotFoundContent() {
     return (
         <>
-            <style>{CSS}</style>
+            <style dangerouslySetInnerHTML={{ __html: CSS }} />
             <main className="pm-404">
                 <div className="pm-404-eyebrow">
                     <span className="dot" />

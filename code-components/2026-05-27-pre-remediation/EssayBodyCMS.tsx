@@ -326,7 +326,7 @@ export default function EssayBodyCMS(props: Props) {
 
     return (
         <>
-            <style dangerouslySetInnerHTML={{ __html: CSS }} />
+            <style>{CSS}</style>
             <div
                 className="pm-scroll-progress"
                 style={{ width: `${scrollPct}%` }}

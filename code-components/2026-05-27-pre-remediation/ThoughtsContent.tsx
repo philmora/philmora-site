@@ -99,7 +99,7 @@ export default function ThoughtsContent() {
 
     return (
         <div className="pm-d5-writing">
-            <style dangerouslySetInnerHTML={{ __html: CSS }} />
+            <style>{CSS}</style>
             <main className="page">
                 <header className="sec-head">
                     <div className="sec-key">FIELD NOTES</div>

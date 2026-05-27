@@ -3,7 +3,7 @@
 export default function HomeContent() {
   return (
     <div className="pm-d5">
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style>{`
 .pm-d5 {
   --ink: #0A0B0E;
   --ink-2: #131419;
@@ -564,7 +564,7 @@ export default function HomeContent() {
   .pm-d5 .contact { grid-template-columns: 1fr; }
   .pm-d5 .foot { grid-template-columns: 1fr; }
 }
-` }} />
+`}</style>
 
       <header className="term-bar">
         <div className="tb-cell id">PHIL MORA<span className="meta">// the engine</span></div>

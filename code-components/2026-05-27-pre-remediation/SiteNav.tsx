@@ -46,7 +46,7 @@ export default function SiteNav(_props: Props) {
 
     return (
         <div className="pm-d5-nav">
-            <style dangerouslySetInnerHTML={{ __html: `
+            <style>{`
 .pm-d5-nav {
   --ink: #0A0B0E;
   --ink-2: #131419;
@@ -140,7 +140,7 @@ export default function SiteNav(_props: Props) {
   .pm-d5-nav .tb-cell:last-child { justify-content: flex-start; }
   .pm-d5-nav .tb-nav { gap: 16px; }
 }
-` }} />
+`}</style>
 
             <header className="term-bar">
                 <a

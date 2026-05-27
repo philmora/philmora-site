@@ -9,7 +9,7 @@ import { addPropertyControls, ControlType } from "framer"
 export default function SiteFooter() {
     return (
         <div className="pm-d5-foot-wrap">
-            <style dangerouslySetInnerHTML={{ __html: `
+            <style>{`
 .pm-d5-foot-wrap {
   --ink: #0A0B0E;
   --paper: #E8E6DC;
@@ -45,7 +45,7 @@ export default function SiteFooter() {
   .pm-d5-foot { grid-template-columns: 1fr; gap: 12px; }
   .pm-d5-foot .sys { text-align: left; white-space: normal; }
 }
-` }} />
+`}</style>
             <footer className="pm-d5-foot">
                 <span className="k">v.01</span>
                 <span className="copy">

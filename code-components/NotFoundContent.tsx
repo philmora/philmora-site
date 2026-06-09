@@ -1,90 +1,122 @@
 // @ts-ignore
 import { addPropertyControls, ControlType } from "framer"
+import { useState } from "react"
 
 /**
- * NotFoundContent — 404 "drifted off the map" page body.
- * Simple now that essay detail pages are served natively by Framer CMS
- * at /thoughts/:slug (no URL routing hacks needed).
+ * NotFoundContent: cinematic, on-brand, self-contained 404 (ink, Unbounded, amber/cobalt).
+ * Carries the real site menubar (logomark + Home / Dispatches / Shinka / Connect + mobile
+ * hamburger). CSS-only cosmic background, no image dependency. All links point to live pages.
  */
 export default function NotFoundContent() {
-    return (
-        <>
-            <style>{CSS}</style>
-            <main className="pm-404">
-                <div className="pm-404-eyebrow">
-                    <span className="dot" />
-                    ERR / 404 · PAGE NOT IN THE SYSTEM
-                </div>
-                <h1 className="pm-404-title">
-                    You drifted off <em>the map.</em>
-                </h1>
-                <p className="pm-404-lede">
-                    This page doesn't exist — but plenty of others do. The
-                    infrastructure thesis. The agents-as-teammates argument.
-                    The pattern across twelve years of roles. Pick a direction.
-                </p>
-                <div className="pm-404-ctas">
-                    <a href="/" className="btn primary" data-cursor="link">
-                        ← BACK HOME
-                    </a>
-                    <a href="/thoughts" className="btn" data-cursor="link">
-                        READ THE BIG PICTURE
-                    </a>
-                </div>
-                <div className="pm-404-coords">
-                    <span>LAT 40.5853° N</span>
-                    <span>LNG 105.0844° W</span>
-                    <span>ALT 5,000 FT</span>
-                    <span>SIG —</span>
-                </div>
-            </main>
-        </>
-    )
+  const [menuOpen, setMenuOpen] = useState(false)
+  return (
+    <div className="nf">
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
+      <div className="glow" />
+      <div className="grain" />
+
+      <nav className="nav">
+        <a className="logo" href="/"><span className="lm" />PHIL MORA</a>
+        <span className="sp" />
+        <a className="lnk" href="/">Home</a>
+        <a className="lnk" href="/essays">Dispatches</a>
+        <a className="lnk" href="/the-build">Shinka <span className="kj">進化</span></a>
+        <a className="lnk" href="/#connect">Connect</a>
+        <button
+          className={"burger" + (menuOpen ? " open" : "")}
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+        >
+          <span /><span /><span />
+        </button>
+      </nav>
+
+      <div className={"mobnav" + (menuOpen ? " open" : "")}>
+        <a href="/" onClick={() => setMenuOpen(false)}>Home</a>
+        <a href="/essays" onClick={() => setMenuOpen(false)}>Dispatches</a>
+        <a href="/the-build" onClick={() => setMenuOpen(false)}>Shinka <span className="kj">進化</span></a>
+        <a href="/#connect" onClick={() => setMenuOpen(false)}>Connect</a>
+      </div>
+
+      <div className="wrap">
+        <div className="eyebrow"><span className="dot" /> Error 404 · off the map</div>
+        <h1 className="big">You drifted off <em>the map.</em></h1>
+        <p className="lede">This page does not exist. Plenty of others do. Pick a direction and keep building.</p>
+        <div className="ctas">
+          <a className="btn primary" href="/">← Back home</a>
+          <a className="btn" href="/essays">Read the dispatches</a>
+        </div>
+      </div>
+
+      <div className="foot">philmora · northern colorado · 5,000 ft</div>
+    </div>
+  )
 }
 
 addPropertyControls(NotFoundContent, {})
 
 const CSS = `
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
-.pm-404 {
-    min-height: 100vh;
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 180px clamp(24px, 4vw, 72px) 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 32px;
-    color: #EDE6D7;
-    font-family: 'JetBrains Mono', monospace;
-    position: relative;
-    z-index: 3;
-}
-.pm-404 * { box-sizing: border-box; }
-.pm-404-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #7A7568; font-weight: 500; display: inline-flex; align-items: center; }
-.pm-404-eyebrow .dot { display: inline-block; width: 6px; height: 6px; background: #E26B38; border-radius: 50%; margin-right: 10px; box-shadow: 0 0 12px rgba(226,107,56,0.25); animation: pm_pulse 1.8s ease-in-out infinite; }
-@keyframes pm_pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.75); } }
-.pm-404-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(56px, 10vw, 160px); letter-spacing: -0.03em; line-height: 0.92; color: #EDE6D7; max-width: 1100px; font-variation-settings: "opsz" 144, "SOFT" 50; margin: 0; }
-.pm-404-title em { font-style: italic; font-weight: 900; color: #E26B38; }
-.pm-404-lede { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(20px, 2vw, 28px); line-height: 1.4; letter-spacing: -0.01em; color: #BDB6A8; max-width: 720px; text-wrap: pretty; margin: 0; }
-.pm-404-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; }
-.pm-404 .btn { display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #EDE6D7; text-decoration: none; border: 1px solid rgba(237,230,215,0.2); background: transparent; transition: border-color 200ms, background 200ms, color 200ms; cursor: none; }
-.pm-404 .btn:hover { border-color: #E26B38; color: #E26B38; }
-.pm-404 .btn.primary { background: #E26B38; color: #0A0B0F; border-color: #E26B38; }
-.pm-404 .btn.primary:hover { background: transparent; color: #E26B38; }
-.pm-404-coords { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(237,230,215,0.08); display: flex; gap: 40px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7A7568; text-transform: uppercase; }
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-@media (max-width: 720px) {
-    .pm-404 {
-        min-height: auto;
-        padding: 96px 20px 64px;
-        gap: 24px;
-    }
-    .pm-404-title { font-size: clamp(44px, 12vw, 72px); }
-    .pm-404-lede { font-size: clamp(17px, 4.5vw, 22px); }
-    .pm-404-ctas { gap: 10px; }
-    .pm-404 .btn { padding: 12px 18px; font-size: 11px; }
-    .pm-404-coords { gap: 12px 24px; margin-top: 24px; padding-top: 20px; font-size: 10px; }
+.nf{
+  --ink:#060509; --paper:#F6F3EC; --c2:#2E6BFF; --c5:#FF7A1A; --c6:#FFD23E; --neon:#2FD0FF;
+  --f:'Space Grotesk',sans-serif; --disp:'Unbounded',sans-serif; --mono:'JetBrains Mono',monospace;
+  position:relative; width:100%; min-height:100vh; background:var(--ink); color:var(--paper);
+  font-family:var(--f); -webkit-font-smoothing:antialiased; overflow:hidden;
+  display:flex; flex-direction:column; justify-content:center; padding:120px clamp(24px,6vw,80px) 90px;
 }
+.nf *{ box-sizing:border-box; margin:0; padding:0; }
+.nf a{ color:inherit; text-decoration:none; }
+
+.nf .glow{ position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(58% 50% at 16% 22%, rgba(255,122,26,.20), transparent 60%),
+             radial-gradient(55% 50% at 86% 28%, rgba(46,107,255,.22), transparent 62%),
+             radial-gradient(72% 60% at 62% 110%, rgba(47,208,255,.10), transparent 66%); }
+.nf .grain{ position:absolute; inset:0; z-index:1; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+  background-image:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 2px); }
+
+/* NAV — the real site menubar */
+.nf .nav{ position:absolute; z-index:6; top:0; left:0; right:0; display:flex; align-items:center; gap:14px; padding:14px clamp(24px,6vw,80px); color:#fff; }
+.nf .nav .logo{ display:inline-flex; align-items:center; gap:11px; font-family:var(--disp); font-weight:800; font-size:16px; letter-spacing:-.02em; white-space:nowrap; }
+.nf .nav .lm{ width:28px; height:28px; border-radius:6px; background:var(--c2); box-shadow:0 2px 14px rgba(46,107,255,.5); flex:0 0 auto; }
+.nf .nav .sp{ flex:1; }
+.nf .nav a.lnk{ font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; opacity:.82; transition:opacity .2s; padding:7px 0; }
+.nf .nav a.lnk:hover{ opacity:1; }
+.nf .nav a.lnk .kj{ color:var(--c5); font-family:var(--mono); font-size:.92em; letter-spacing:.04em; margin-left:5px; }
+.nf .burger{ display:none; flex-direction:column; justify-content:center; gap:5px; width:38px; height:38px; padding:9px 7px; background:none; border:0; cursor:pointer; }
+.nf .burger span{ display:block; height:2px; width:100%; background:#fff; border-radius:2px; transition:transform .3s, opacity .2s; box-shadow:0 1px 6px rgba(0,0,0,.5); }
+.nf .burger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.nf .burger.open span:nth-child(2){ opacity:0; }
+.nf .burger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+.nf .mobnav{ position:absolute; top:0; left:0; right:0; z-index:5; min-height:100vh; display:flex; flex-direction:column; gap:2px;
+  padding:92px 24px 40px; background:rgba(6,5,9,.98); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
+  transform:translateY(-102%); pointer-events:none; transition:transform .36s cubic-bezier(0.16,1,0.3,1); }
+.nf .mobnav.open{ transform:translateY(0); pointer-events:auto; }
+.nf .mobnav a{ font-family:var(--disp); font-weight:800; text-transform:uppercase; font-size:30px; letter-spacing:-.01em; color:#fff; opacity:.92; padding:16px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+.nf .mobnav a .kj{ color:var(--c5); font-family:var(--mono); font-size:.5em; letter-spacing:.04em; margin-left:10px; vertical-align:middle; }
+
+.nf .wrap{ position:relative; z-index:2; max-width:840px; }
+.nf .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:.24em; text-transform:uppercase; color:var(--neon); display:flex; align-items:center; gap:11px; margin-bottom:3vh; }
+.nf .eyebrow .dot{ width:8px; height:8px; border-radius:50%; background:var(--c5); box-shadow:0 0 12px var(--c5); flex:0 0 auto; }
+.nf .big{ font-family:var(--disp); font-weight:800; text-transform:uppercase; letter-spacing:-.03em; line-height:.95; font-size:clamp(40px,8vw,92px); color:#fff; }
+.nf .big em{ font-style:italic; color:var(--c5); }
+.nf .lede{ font-size:clamp(16px,1.7vw,20px); line-height:1.55; color:rgba(246,243,236,.8); max-width:52ch; margin-top:3.5vh; }
+.nf .ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-top:5vh; }
+.nf .btn{ display:inline-flex; align-items:center; gap:8px; padding:15px 24px; font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; border:1px solid rgba(246,243,236,.22); border-radius:8px; color:var(--paper); transition:border-color .2s, color .2s, transform .2s; cursor:pointer; }
+.nf .btn:hover{ border-color:#fff; transform:translateY(-2px); }
+.nf .btn.primary{ background:var(--c5); color:var(--ink); border-color:var(--c5); font-weight:700; }
+.nf .btn.primary:hover{ filter:brightness(1.06); color:var(--ink); }
+
+.nf .foot{ position:absolute; bottom:30px; left:clamp(24px,6vw,80px); z-index:3; font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:rgba(246,243,236,.4); }
+
+@media(max-width:640px){
+  .nf{ padding:104px 22px 84px; }
+  .nf .nav a.lnk{ display:none; }
+  .nf .burger{ display:flex; }
+  .nf .nav{ padding:12px 22px; }
+  .nf .nav .logo{ font-size:15px; } .nf .nav .lm{ width:24px; height:24px; }
+  .nf .big{ font-size:50px; line-height:.98; }
+}
+@media(prefers-reduced-motion:reduce){ .nf .mobnav{ transition:none; } }
 `
